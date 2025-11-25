@@ -5,22 +5,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class MainViewModel : ViewModel() {
-    var profileMessage by mutableStateOf("Це екран профілю")
-        private set
+class MainViewModel(
+    private val repository: FavoritesRepository = FavoritesRepository()
+) : ViewModel() {
 
-    var favoritesMessage by mutableStateOf("Ваш список улюбленого порожній")
+    var profileMessage by mutableStateOf("Це екран профілю")
         private set
 
     var settingsMessage by mutableStateOf("Початкові налаштування системи")
         private set
 
-    fun updateProfile() {
-        profileMessage = "Профіль оновлено!"
+    var movies by mutableStateOf<List<Movie>>(emptyList())
+        private set
+
+    var books by mutableStateOf<List<Book>>(emptyList())
+        private set
+
+    init {
+        loadData()
     }
 
-    fun updateFavorites() {
-        favoritesMessage = "Додано новий улюблений елемент!"
+    private fun loadData() {
+        movies = repository.getMovies()
+        books = repository.getBooks()
+    }
+
+    fun updateProfile() {
+        profileMessage = "Профіль оновлено!"
     }
 
     fun updateSettings() {

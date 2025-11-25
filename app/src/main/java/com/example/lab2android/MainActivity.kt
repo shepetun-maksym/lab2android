@@ -52,23 +52,15 @@ fun Lab2App() {
             }
         }
     ) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                when (currentDestination) {
-                    AppDestinations.PROFILE ->
-                        ProfileScreen(viewModel, Modifier.padding(innerPadding))
+        when (currentDestination) {
+            AppDestinations.PROFILE ->
+                ProfileScreen(viewModel)
 
-                    AppDestinations.FAVORITES ->
-                        FavoritesScreen(viewModel)
+            AppDestinations.FAVORITES ->
+                FavoritesScreen(viewModel)
 
-                    AppDestinations.SETTINGS ->
-                        SettingsScreen(viewModel)
-                }
-            }
+            AppDestinations.SETTINGS ->
+                SettingsScreen(viewModel)
         }
     }
 }
@@ -82,13 +74,11 @@ enum class AppDestinations(
     SETTINGS("Налаштування", Icons.Default.Settings)
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+fun ProfileScreen(viewModel: MainViewModel) {
     val navController = rememberNavController()
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = currentBackStackEntry?.destination?.route
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     val topBarTitle = when (currentRoute) {
         "main_profile" -> "Профіль"
@@ -106,44 +96,39 @@ fun ProfileScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                 navigationIcon = {
                     if (canNavigateBack) {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Назад"
-                            )
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Назад")
                         }
                     }
-                },
+                }
             )
         }
     ) { innerPadding ->
-        Box(
+
+        NavHost(
+            navController = navController,
+            startDestination = "main_profile",
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            NavHost(
-                navController = navController,
-                startDestination = "main_profile"
-            ) {
-                composable("main_profile") {
-                    ProfileMainSubScreen(
-                        viewModel = viewModel,
-                        onNavigateToOldLayout = { navController.navigate("old_layout") },
-                        onNavigateToSecond = { navController.navigate("second_screen") }
-                    )
-                }
+            composable("main_profile") {
+                ProfileMainSubScreen(
+                    viewModel = viewModel,
+                    onNavigateToOldLayout = { navController.navigate("old_layout") },
+                    onNavigateToSecond = { navController.navigate("second_screen") }
+                )
+            }
 
-                composable("old_layout") {
-                    OldLayoutScreen(
-                        onNext = { navController.navigate("second_screen") }
-                    )
-                }
+            composable("old_layout") {
+                OldLayoutScreen(
+                    onNext = { navController.navigate("second_screen") }
+                )
+            }
 
-                composable("second_screen") {
-                    SecondSubScreen(
-                        onBack = { navController.popBackStack() }
-                    )
-                }
+            composable("second_screen") {
+                SecondSubScreen(
+                    onBack = { navController.popBackStack() }
+                )
             }
         }
     }
