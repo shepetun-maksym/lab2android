@@ -25,43 +25,41 @@ fun FavoritesScreen(viewModel: MainViewModel) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Фільми
-            item {
-                Text(
-                    text = "Фільми",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            item {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(viewModel.movies) { movie ->
-                        MovieCard(movie)
-                    }
+            items(viewModel.mixedList) { item ->
+                when (item) {
+                    is ListItem.HeaderItem -> HeaderCard(item.title)
+                    is ListItem.BookItem -> BookCard(item.book)
+                    is ListItem.MovieItem -> MovieCardVertical(item.movie)
+                    is ListItem.MovieCarouselItem -> MovieCarousel(item.movies)
                 }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Книги",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            items(viewModel.books) { book ->
-                BookCard(book)
             }
         }
     }
 }
 
 @Composable
-fun MovieCard(movie: Movie) {
+fun HeaderCard(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.headlineSmall,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
+}
+
+@Composable
+fun MovieCarousel(movies: List<Movie>) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(movies) { movie ->
+            MovieCardHorizontal(movie)
+        }
+    }
+}
+
+@Composable
+fun MovieCardHorizontal(movie: Movie) {
     Card(
         modifier = Modifier.width(250.dp),
         elevation = CardDefaults.cardElevation(4.dp)
@@ -78,7 +76,33 @@ fun MovieCard(movie: Movie) {
             )
             Text(
                 text = movie.genres.joinToString(", "),
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+
+@Composable
+fun MovieCardVertical(movie: Movie) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = movie.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Рік: ${movie.year}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = movie.genres.joinToString(", "),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -88,7 +112,10 @@ fun MovieCard(movie: Movie) {
 fun BookCard(book: Book) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(

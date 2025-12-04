@@ -2,24 +2,40 @@ package com.example.lab2android
 
 class FavoritesRepository {
 
-    fun getMovies(): List<Movie> = listOf(
-        Movie("Аватар", 2009, listOf("Фантастика", "Пригоди", "Екшн")),
-        Movie("Інтерстеллар", 2014, listOf("Sci-Fi", "Драма", "Пригоди")),
-        Movie("Джон Вік", 2014, listOf("Бойовик", "Трилер")),
-        Movie("Форсаж", 2001, listOf("Бойовик", "Кримінал", "Автомобілі")),
-        Movie("Термінатор 2", 1991, listOf("Бойовик", "Sci-Fi"))
-    )
+    fun getMixedList(): List<ListItem> = buildList {
+        val books = listOf(
+            Book(1, "Тіні забутих предків", "Михайло Коцюбинський", 120),
+            Book(2, "1984", "Джордж Орвелл", 328),
+            Book(3, "Гаррі Поттер", "Дж. К. Роулінг", 432),
+            Book(4, "Кобзар", "Тарас Шевченко", 256),
+            Book(5, "Маленький принц", "Антуан де Сент-Екзюпері", 96)
+        )
 
-    fun getBooks(): List<Book> = listOf(
-        Book("Відьмак", "Анджей Сапковський", 320),
-        Book("Кайдашева сім'я", "Іван Нечуй-Левицький", 200),
-        Book("1984", "Джордж Орвелл", 328),
-        Book("Маленький принц", "Антуан де Сент-Екзюпері", 96),
-        Book("Хроніки Нарнії", "Клайв Стейплз Льюїс", 350),
-        Book("Тіні забутих предків", "Михайло Коцюбинський", 120),
-        Book("Мистецтво війни", "Сунь-цзи", 160),
-        Book("Пікнік на узбіччі", "Брати Стругацькі", 290),
-        Book("Хоббіт", "Дж. Р. Р. Толкін", 310),
-        Book("Місто", "Валер'ян Підмогильний", 280)
-    )
+        val movies = listOf(
+            Movie(1, "Інтерстеллар", 2014, listOf("Sci-Fi", "Драма", "Пригоди")),
+            Movie(2, "Темний лицар", 2008, listOf("Бойовик", "Кримінал")),
+            Movie(3, "Форест Гамп", 1994, listOf("Драма", "Романтика")),
+            Movie(4, "Початок", 2010, listOf("Sci-Fi", "Трилер")),
+            Movie(5, "Матриця", 1999, listOf("Sci-Fi", "Бойовик"))
+        )
+
+        val carouselMovies = listOf(
+            Movie(101, "Аватар", 2009, listOf("Sci-Fi", "Пригоди")),
+            Movie(102, "Титанік", 1997, listOf("Драма", "Романтика")),
+            Movie(103, "Месники", 2012, listOf("Бойовик", "Sci-Fi")),
+            Movie(104, "Гладіатор", 2000, listOf("Бойовик", "Драма"))
+        )
+
+        add(ListItem.HeaderItem("Книги - Частина 1"))
+        books.take(2).forEach { add(ListItem.BookItem(it)) }
+
+        add(ListItem.HeaderItem("Рекомендовані фільми"))
+        add(ListItem.MovieCarouselItem(carouselMovies))
+
+        add(ListItem.HeaderItem("Всі фільми"))
+        movies.forEach { add(ListItem.MovieItem(it)) }
+
+        add(ListItem.HeaderItem("Книги - Частина 2"))
+        books.drop(2).forEach { add(ListItem.BookItem(it)) }
+    }
 }
